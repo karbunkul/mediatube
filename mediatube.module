@@ -5,7 +5,7 @@
 function mediatube_menu() {
  $items = array();
  // http:example.com/tv
- $items['tv'] = array(
+ $items['mediatube'] = array(
    'title' => t('MediaTube'),
    'access callback' => TRUE,
    'page callback' => 'page_main_callback',
@@ -14,7 +14,7 @@ function mediatube_menu() {
    'menu_name' => 'navigation',
  );
  // http:example.com/tv/category
- $items['tv/playlists'] = array(
+ $items['mediatube/playlists'] = array(
    'title' => t('Playlists'),
    'access callback' => TRUE,
    'page callback' => 'page_playlists_callback',
@@ -22,7 +22,7 @@ function mediatube_menu() {
    'type' => MENU_VISIBLE_IN_BREADCRUMB,
  );
  // http:example.com/tv/1 for example
- $items['tv/%'] = array(
+ $items['mediatube/%'] = array(
    'title callback' => 'title_video_view_callback',
    'title arguments' => array(1),
    'access callback' => TRUE,
