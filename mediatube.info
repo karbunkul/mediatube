@@ -1,4 +1,4 @@
 name = Media Tube
-description = Internet TV for <a href="http://tgasu.ru">tgasu.ru</a>.
+description = Video playlists.
 core = 7.x
-package = Tgasu
+package = Media
