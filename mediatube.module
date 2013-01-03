@@ -1,0 +1,71 @@
+<?php
+/**
+ * Implements hook_menu().
+ */
+function mediatube_menu() {
+    $items = array();
+		// http:example.com/tv
+    $items['tv'] = array(
+        'title' => 'Интернет TV',
+        'access callback' => TRUE,
+        'page callback' => 'page_main_callback',
+    		'file' => 'include/page_main.inc',
+        'type' => MENU_VISIBLE_IN_BREADCRUMB,
+    );
+    // http:example.com/tv/category
+    $items['tv/playlists'] = array(
+        'title' => 'Плейлисты',
+        'access callback' => TRUE,
+        'page callback' => 'page_playlists_callback',
+        'type' => MENU_VISIBLE_IN_BREADCRUMB,
+    );
+    // http:example.com/tv/1 for example
+    $items['tv/%'] = array(
+        'title callback' => 'title_video_view_callback',
+        'title arguments' => array(1),
+        'access callback' => TRUE,
+        'page arguments' => array(1),
+        'page callback' => 'page_video_view_callback',
+        'type' => MENU_VISIBLE_IN_BREADCRUMB,    
+    );
+    return $items;
+}
+
+/**
+ * Implements hook_theme().
+ */
+
+function mediatube_theme($existing, $type, $theme, $path)
+{
+	$themes = array(
+			'mediatube_dashboard' => array(
+					'template' => 'template/mediatube-dashboard', // your template file called custompage.tpl.php
+					'file' => 'include/page_main.inc',
+			),
+	);
+	return $themes;
+}
+
+
+
+/**
+* Playlists page callback.
+**/
+function page_playlists_callback() {
+    return t('Вывод сетки с плейлистами');
+}
+
+/**
+* Video view page callback.
+**/
+function page_video_view_callback($vid) {
+    return t('Страница просмотра ролика ') .  $vid;
+}
+
+/**
+* Video view title callback.
+**/
+function title_video_view_callback($vid) {
+    return t('Страница ролика ') .  $vid;
+}
+
