@@ -10,7 +10,7 @@ function mediatube_menu() {
    'access callback' => TRUE,
    'page callback' => 'page_main_callback',
    'file' => 'include/page_main.inc',
-   'type' => MENU_NORMAL_ITEM,
+   //'type' => MENU_NORMAL_ITEM,
    'menu_name' => 'navigation',
  );
  // http:example.com/tv/category
@@ -19,7 +19,12 @@ function mediatube_menu() {
    'access callback' => TRUE,
    'page callback' => 'page_playlists_callback',
    'file' => 'include/page_playlists.inc',
-   'type' => MENU_VISIBLE_IN_BREADCRUMB,
+   'type' => MENU_LOCAL_TASK,
+ );
+ $items['mediatube/default'] = array(
+  'title' => t('View'),
+   'type' => MENU_DEFAULT_LOCAL_TASK,
+   'weight' => -10,
  );
  // http:example.com/tv/1 for example
  $items['mediatube/%'] = array(
@@ -31,6 +36,7 @@ function mediatube_menu() {
    'file' => 'include/page_video_view.inc',
    'type' => MENU_VISIBLE_IN_BREADCRUMB,
  );
+ 
  return $items;
 }
 
