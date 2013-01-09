@@ -1,0 +1,44 @@
+<?php
+
+function mediatube_install(){
+
+}
+
+function mediatube_schema(){
+ $schema['mediatube_categories'] = array(
+  'description' => 'TODO: please describe this table!',
+  'fields' => array(
+    'cid' => array(
+      'description' => 'Categories ID',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'created' => array(
+      'description' => '',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'alias' => array(
+      'description' => 'Category name in url',
+      'type' => 'varchar',
+      'length' => '64',
+      'not null' => TRUE,
+    ),
+    'active' => array(
+      'description' => '',
+      'type' => 'varchar',
+      'length' => '3',
+      'not null' => TRUE,
+    ),
+    'weight' => array(
+      'description' => '',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+  ),
+);
+
+
+ return $schema;
+ 
+}
