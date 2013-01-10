@@ -1,10 +1,13 @@
 <div class="well">
 <p>
- <a href="?q=<?php print $_GET['q']; ?>/1">Ролик 1</a>
- <a href="?q=<?php print $_GET['q']; ?>/2">Ролик 2</a>
- <a href="?q=<?php print $_GET['q']; ?>/3">Ролик 3</a>
- <a href="?q=<?php print $_GET['q']; ?>/4">Ролик 4</a>
-	<p>123; <?php print $url;?>
+ <?php print l("Ролик 1", 'mediatube/vid-1'); ?>
+ <?php print l("Ролик 2", 'mediatube/vid-2'); ?>
+ <?php print l("Ролик 3", 'mediatube/vid-3'); ?>
+ <?php print l("Ролик 4", 'mediatube/vid-4'); ?>
+ <?php print l("Ролик 5", 'mediatube/vid-5'); ?>
+ 
+ 
+ <p>123; <?php print $url;?>
 </div>
 
 <p>привет <?php print $hello;?>

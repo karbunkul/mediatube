@@ -4,16 +4,26 @@
  */
 function mediatube_menu() {
  $items = array();
- // http:example.com/tv
+ 
+ // http:example.com/mediatube
  $items['mediatube'] = array(
-   'title' => t('MediaTube'),
-   'access callback' => TRUE,
-   'page callback' => 'page_main_callback',
-   'file' => 'include/page_main.inc',
-   //'type' => MENU_NORMAL_ITEM,
-   'menu_name' => 'navigation',
+  'title' => t('MediaTube'),
+  'access callback' => TRUE,
+  'page callback' => 'page_main_callback',
+  'file' => 'include/page_main.inc',
+  'type' => MENU_NORMAL_ITEM,
+  'menu_name' => 'navigation',
  );
- // http:example.com/tv/category
+ // http:example.com/mediatube/vid-1
+ $items['mediatube/%'] = array(
+  'title callback' => 'title_video',
+  'access callback' => TRUE,
+  'page callback' => 'page_main_callback',
+  'file' => 'include/page_main.inc',
+  'type' => MENU_NORMAL_ITEM,
+ );
+ 
+ // http:example.com/mediatube/playlists
  $items['mediatube/playlists'] = array(
    'title' => t('Playlists'),
    'access callback' => TRUE,
@@ -21,20 +31,43 @@ function mediatube_menu() {
    'file' => 'include/page_playlists.inc',
    'type' => MENU_LOCAL_TASK,
  );
+ 
+ // http:example.com/mediatube/playlists/1
+ $items['mediatube/playlist/%'] = array(
+   'title callback' => 'title_playlist',
+   'access callback' => TRUE,
+   'page callback' => 'page_playlist_callback',
+   'file' => 'include/page_playlists.inc',
+   'type' => MENU_NORMAL_ITEM,
+ );
+ 
  $items['mediatube/default'] = array(
   'title' => t('View'),
    'type' => MENU_DEFAULT_LOCAL_TASK,
    'weight' => -10,
  );
- // http:example.com/tv/1 for example
- $items['mediatube/%'] = array(
-   'title callback' => 'title_video_view_callback',
-   'title arguments' => array(1),
+
+ $items['admin/config/media/mediatube'] = array(
+  'title' => 'MediaTube',
+  'description' => 'MediaTube settings',
+  'type' => MENU_NORMAL_ITEM,
+  'access callback' => TRUE,
+  'page callback' => 'drupal_get_form',
+  'page arguments' => array('mediatube_settings_form'),
+  );
+ 
+ $items['admin/config/media/mediatube/default'] = array(
+  'title' => t('Settings'),
+  'type' => MENU_DEFAULT_LOCAL_TASK,
+  'weight' => -10,
+ );
+
+ $items['admin/config/media/mediatube/playlists'] = array(
+  'title' => t('Playlists'),
    'access callback' => TRUE,
-   'page arguments' => array(1),
-   'page callback' => 'page_video_view_callback',
-   'file' => 'include/page_video_view.inc',
-   'type' => MENU_VISIBLE_IN_BREADCRUMB,
+   'page callback' => 'page_playlists_callback',
+   'file' => 'include/page_playlists.inc',
+   'type' => MENU_LOCAL_TASK,
  );
  
  return $items;
@@ -44,13 +77,88 @@ function mediatube_menu() {
  * Implements hook_theme().
  */
 
-function mediatube_theme($existing, $type, $theme, $path)
-{
+function mediatube_theme($existing, $type, $theme, $path){
  $themes = array(
-   'mediatube_dashboard' => array(
-     'template' => 'template/mediatube-dashboard',
-     'file' => 'include/page_main.inc',
+  'mediatube_dashboard' => array(
+   'template' => 'template/mediatube-dashboard',
+   'file' => 'include/page_main.inc',
    ),
  );
+ 
  return $themes;
+}
+
+/**
+ * Implements hook_form().
+ */
+
+function mediatube_settings_form($form){
+ $form['jwplayer_path'] = array(
+  '#title' => 'Path to JWplayer',
+  '#type' => 'textfield',
+  '#default_value' => variable_get('mediatube_jwplayer_path', 'sites/all/libraries/jw_player'),
+  '#description' => t('The location where Jw player plugin is installed. Relative paths are from the Drupal root directory.'),
+  '#required' => TRUE,
+   );
+ $form['submit'] = array(
+  '#type'=>'submit',
+  '#value' => 'Submit',
+ );
+  
+ return $form;
+}
+
+function mediatube_settings_form_validate(&$form, &$form_state) {
+  if (!file_exists($form_state['values']['jwplayer_path'])) {
+    form_set_error('jwplayer_path', 'Folder path jw player plugin not exists');
+  }
+  return FALSE;
+}
+
+
+function mediatube_settings_form_submit(&$form, &$form_state) {
+  kpr($form_state);
+ 
+  // path to jwplayer
+  variable_set('mediatube_jwplayer_path_', $form_state['values']['jwplayer_path']);
+  
+  drupal_set_message(t('Your configuration has been saved.'));
+}
+
+/**
+ * Implements hook_block_info().
+ */
+
+function mediatube_block_info(){
+ $blocks['mediatube'] = array(
+  'info' => t('MediaTube playlists'),
+  'cache' => DRUPAL_NO_CACHE,
+ );
+  
+ return $blocks;
+}
+
+/**
+ * Implements hook_block_view().
+ */
+
+function mediatube_block_view($delta = ''){
+ $block = array();
+ $block['subject'] = 'Playlists';
+
+ $content = '';
+ 
+ $query = 'SELECT title,alias FROM {mediatube_categories}';
+ $res = db_query_range($query, 0,5);
+ 
+ 
+ $output = '';
+ while ( $row = $res->fetchAssoc() ){
+  $output .= '<li>' . l($row['title'], 'mediatube/playlist/' . $row['alias']) . '</li>';
+  $rows[] = $row;
+ }
+ 
+ $block['content'] = '<ul class=menu>' . $output . '</ul>';
+  
+ return $block;
 }
