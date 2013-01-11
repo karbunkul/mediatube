@@ -9,7 +9,7 @@ function mediatube_install(){
    'created' => 1357754373,
    'changed' => 1357754373,
    'description'=> 'Новости университета',
-   'active'=> 'on',
+   'active'=> '1',
    'preview'=> '',
    'weight'=> 10,
   ))
@@ -56,8 +56,8 @@ function mediatube_schema(){
      ),
      'active' => array(
        'description' => 'TODO: please describe this field!',
-       'type' => 'varchar',
-       'length' => '3',
+       'type' => 'int',
+       'length' => '1',
        'not null' => TRUE,
      ),
      'preview' => array(

@@ -3,3 +3,5 @@ description = Video playlists.
 core = 7.x
 package = Media
 version = 1.0-dev
+
+configure = admin/config/media/mediatube
