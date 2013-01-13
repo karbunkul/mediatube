@@ -37,12 +37,21 @@ function mediatube_menu() {
    'type' => MENU_NORMAL_ITEM,
  );
  
+ $items['admin/config/media/mediatube/playlist/%/edit'] = array(
+  'title' => 'Title',
+  'type' => MENU_VISIBLE_IN_BREADCRUMB,
+  'access callback' => TRUE,
+  'page callback' => 'drupal_get_form',
+  'page arguments' => array('mediatube_edit_playlist_form'),
+ );
+ 
  $items['mediatube/default'] = array(
   'title' => t('View'),
    'type' => MENU_DEFAULT_LOCAL_TASK,
    'weight' => -10,
  );
 
+ 
  $items['admin/config/media/mediatube'] = array(
   'title' => 'MediaTube',
   'description' => 'MediaTube settings',
@@ -51,6 +60,8 @@ function mediatube_menu() {
   'page callback' => 'drupal_get_form',
   'page arguments' => array('mediatube_settings_form'),
   );
+ 
+ 
  
  $items['admin/config/media/mediatube/default'] = array(
   'title' => t('Settings'),
@@ -64,6 +75,8 @@ function mediatube_menu() {
    'page callback' => 'page_admin_playlists_callback',
    'type' => MENU_LOCAL_TASK,
  );
+ 
+ 
  
  return $items;
 }

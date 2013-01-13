@@ -19,19 +19,7 @@ function mediatube_block_info(){
 function mediatube_block_view($delta = ''){
  $block = array();
  $block['subject'] = 'Playlists';
- 
  $block['content'] = theme('mediatube_playlists_block');
- /*
- $items = Mediatube::get_categories(array('title'));
  
- $block['content'] = array(
-  'para' => array(
-   '#items' => $items[0],
-   '#attributes' => array('class' => 'menu'),
-   '#theme' => 'item_list',
-   
-  ),
- );
-*/
  return $block;
 }

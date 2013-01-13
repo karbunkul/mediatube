@@ -48,8 +48,13 @@ function title_playlist_callback(){
   
   drupal_set_breadcrumb($breadcrumb);
  }
+ $res = Mediatube::get_category_title(arg(2));
+ if ( $res ){
+  return $res;
+ }else{
+  return 'Playlist not exists';
+ }
  
- return 'Playlist ' . arg(2);
 }
 
 /**
@@ -78,9 +83,31 @@ function page_video_callback(){
 }
 
 function page_admin_playlists_callback(){
- $out = array(
-  '#type' => 'markup',
-  '#markup' => theme('mediatube_playlists_block')
+ //return 'vasy';
+ 
+ $out['new_playlist'] = array(
+  drupal_get_form('mediatube_new_playlist_form'),
  );
+ 
+ // get categories
+ $rows = Mediatube::get_categories(array('title', 'cid', 'alias', 'description'));
+
+ 
+ $rows_temp = array();
+ foreach ($rows AS $row){
+  $row['cid'] = l('Edit', 'admin/config/media/mediatube/playlist/' . $row['cid'] . '/edit');
+  $rows_temp[] = $row;
+ }
+ 
+ //dsm($rows_temp);
+ $rows = $rows_temp;
+ 
+ $header = array('Title', 'Operations', 'Alias', 'Description');
+
+ $out['table'] = array(
+  '#type' => 'markup',
+  '#markup' => theme('table', array('header' => $header, 'rows' => $rows, 'attributes' => array('id' => 'mediatube-admin-playlists'))),
+ );
+ 
  return $out;
 }

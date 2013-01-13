@@ -9,7 +9,7 @@ function mediatube_install(){
    'created' => 1357754373,
    'changed' => 1357754373,
    'description'=> 'Новости университета',
-   'active'=> '1',
+   'active'=> 1,
    'preview'=> '',
    'weight'=> 10,
   ))
@@ -19,60 +19,59 @@ function mediatube_install(){
 function mediatube_schema(){
 
  $schema['mediatube_categories'] = array(
-   
-   'description' => 'TODO: please describe this table!',
-   'fields' => array(
-     'cid' => array(
-       'description' => 'Categories ID',
-       'type' => 'int',
-       'not null' => TRUE,
-     ),
-     'title' => array(
-       'description' => 'TODO: please describe this field!',
-       'type' => 'varchar',
-       'length' => '255',
-       'not null' => TRUE,
-     ),
-     'alias' => array(
-       'description' => 'Category name in url',
-       'type' => 'varchar',
-       'length' => '64',
-       'not null' => TRUE,
-     ),
-     'created' => array(
-       'description' => 'TODO: please describe this field!',
-       'type' => 'int',
-       'not null' => TRUE,
-     ),
-     'changed' => array(
-       'description' => 'TODO: please describe this field!',
-       'type' => 'int',
-       'not null' => TRUE,
-     ),
-     'description' => array(
-       'description' => 'TODO: please describe this field!',
-       'type' => 'text',
-       'not null' => TRUE,
-     ),
-     'active' => array(
-       'description' => 'TODO: please describe this field!',
-       'type' => 'int',
-       'length' => '1',
-       'not null' => TRUE,
-     ),
-     'preview' => array(
-       'description' => 'TODO: please describe this field!',
-       'type' => 'varchar',
-       'length' => '255',
-       'not null' => TRUE,
-     ),
-     'weight' => array(
-       'description' => 'TODO: please describe this field!',
-       'type' => 'int',
-       'not null' => TRUE,
-     ),
-   ),
- );
+  'description' => 'TODO: please describe this table!',
+  'fields' => array(
+    'cid' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'serial',
+      'not null' => TRUE,
+    ),
+    'title' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'varchar',
+      'length' => '255',
+      'not null' => TRUE,
+    ),
+    'alias' => array(
+      'description' => 'Category name in url',
+      'type' => 'varchar',
+      'length' => '64',
+      'not null' => TRUE,
+    ),
+    'created' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'changed' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'description' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'text',
+      'not null' => TRUE,
+    ),
+    'active' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'preview' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'varchar',
+      'length' => '255',
+      'not null' => TRUE,
+    ),
+    'weight' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+  ),
+  'primary key' => array('cid'),
+);
 
  return $schema;
  
