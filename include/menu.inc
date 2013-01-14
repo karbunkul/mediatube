@@ -61,8 +61,6 @@ function mediatube_menu() {
   'page arguments' => array('mediatube_settings_form'),
   );
  
- 
- 
  $items['admin/config/media/mediatube/default'] = array(
   'title' => t('Settings'),
   'type' => MENU_DEFAULT_LOCAL_TASK,
@@ -76,7 +74,13 @@ function mediatube_menu() {
    'type' => MENU_LOCAL_TASK,
  );
  
- 
+ $items['node/add/mediatube'] = array(
+  'title' => 'Mediatube',
+  'page callback' => 'drupal_get_form',
+  'page arguments' => array('mediatube_add_video_form'),
+  'access callback' => TRUE,
+  'type' => MENU_NORMAL_ITEM,
+ );
  
  return $items;
 }

@@ -87,12 +87,17 @@ function mediatube_new_playlist_form($form){
 }
 
 function mediatube_new_playlist_form_validate(&$form, &$form_state) {
- $res = db_query('SELECT title FROM {mediatube_categories} WHERE title = :title', array(':title' => $form_state['values']['title']))->fetchAssoc();
- dsm($res);
+ $res = db_query('SELECT title,alias FROM {mediatube_categories} WHERE title = :title', array(':title' => $form_state['values']['title']))->fetchAssoc();
+ //dsm($res);
  
- if ($form_state['values']['title'] == $res['title']){
-  form_set_error('title', 'Playlist exist');
+ if ( $form_state['values']['title'] == $res['title'] ){
+  form_set_error('title', 'Title exist');
  }
+ 
+ if ( $form_state['values']['alias'] == $res['alias'] ){
+  form_set_error('alias', 'Alias exist');
+ } 
+ 
 }
 
 function mediatube_new_playlist_form_submit(&$form, &$form_state) {
@@ -111,7 +116,7 @@ function mediatube_new_playlist_form_submit(&$form, &$form_state) {
 }
 
 function mediatube_edit_playlist_form($form){
- $row = db_query('SELECT title,alias FROM {mediatube_categories} WHERE cid = :cid', array(':cid' => arg(5)))->fetchAssoc();
+ $row = db_query('SELECT title,alias,active,description FROM {mediatube_categories} WHERE cid = :cid', array(':cid' => arg(5)))->fetchAssoc();
  
  dsm($row);
  $form['title'] = array(
@@ -120,5 +125,75 @@ function mediatube_edit_playlist_form($form){
   '#value' => $row['title'],
  );
  
+ $form['active'] = array(
+  '#type' => 'radios',
+  '#title' => 'Active',
+  '#options' => array(1 => 'Enabled', 0 => 'Disabled'),
+  '#default_value' => $row['active'],
+ );
+ $form['alias'] = array(
+  '#type' => 'textfield',
+  '#title' => 'Alias',
+  '#value' => $row['alias'],
+ );
+ 
+ $form['description'] = array(
+  '#type' => 'textarea',
+  '#title' => 'Description',
+  '#value' => $row['description'],
+  '#rows' => 2,
+ );
+ 
  return system_settings_form($form);
+}
+
+
+function mediatube_add_video_form($form){
+
+ $form['title'] = array(
+  '#title' => 'Title',
+  '#description' => 'Title for added video',
+  '#type' => 'textfield',
+  '#default_value' => '',
+  '#required' => TRUE,
+ );
+ 
+ //$cid = db_query('SELECT cid, title FROM {mediatube_categories}')->fetchAssoc();
+ //$dsm($cid);
+ 
+ $form['cid'] = array(
+  '#type' => 'textfield',
+  '#ajax' => array(
+   'callback' => 'get_ajax_playlists_callback',
+   'method' => 'append',
+   'affect' => 'fade',
+   'event' => 'change',
+  ),
+ );
+ 
+ $form['active'] = array(
+  '#type' => 'radios',
+  '#title' => 'Active',
+  '#options' => array(1 => 'Enabled', 0 => 'Disabled'),
+  '#default_value' => 1,
+ );
+ 
+ $form['alias'] = array(
+  '#type' => 'textfield',
+  '#title' => 'Alias',
+  '#default_value' => '',
+ );
+ 
+ $form['description'] = array(
+  '#type' => 'textarea',
+  '#title' => 'Description',
+  '#default_value' => '',
+  '#rows' => 2,
+ );
+ 
+ return system_settings_form($form);
+}
+
+function get_ajax_playlists_callback(){
+ return 'AJAX';
 }
