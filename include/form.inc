@@ -27,7 +27,7 @@ function mediatube_settings_form($form){
 * Implements form_validate().
 */
 function mediatube_settings_form_validate($form, &$form_state) {
- if (!file_exists($form_state['values']['jwplayer_path'])) {
+ if (!file_exists($form_state['input']['jwplayer_path'])) {
   form_set_error('jwplayer_path', 'Folder path jw player plugin not exists');
  }
 }
@@ -38,7 +38,7 @@ function mediatube_settings_form_validate($form, &$form_state) {
 function mediatube_settings_form_submit($form, $form_state) {
  // path to jwplayer
  //$dsm($form_state);
- variable_set('mediatube_jwplayer_path', $form_state['values']['jwplayer_path']);
+ variable_set('mediatube_jwplayer_path', $form_state['input']['jwplayer_path']);
  
  //drupal_set_message(t('Your configuration has been saved.'));
 }
@@ -90,14 +90,14 @@ function mediatube_new_playlist_form($form){
 }
 
 function mediatube_new_playlist_form_validate($form, &$form_state) {
- $res = db_query('SELECT title,alias FROM {mediatube_categories} WHERE title = :title', array(':title' => $form_state['values']['title']))->fetchAssoc();
+ $res = db_query('SELECT title,alias FROM {mediatube_categories} WHERE title = :title', array(':title' => $form_state['input']['title']))->fetchAssoc();
  //dsm($res);
  
- if ( $form_state['values']['title'] == $res['title'] ){
+ if ( $form_state['input']['title'] == $res['title'] ){
   form_set_error('title', t('Title exist'));
  }
  
- if ( $form_state['values']['alias'] == $res['alias'] ){
+ if ( $form_state['input']['alias'] == $res['alias'] ){
   form_set_error('alias', t('Alias exist'));
  } 
  
@@ -106,12 +106,12 @@ function mediatube_new_playlist_form_validate($form, &$form_state) {
 function mediatube_new_playlist_form_submit($form, &$form_state) {
  $record = db_insert('mediatube_categories')
   ->fields(array(
-   'title' => $form_state['values']['title'],
-   'alias' => $form_state['values']['alias'],
+   'title' => $form_state['input']['title'],
+   'alias' => $form_state['input']['alias'],
    'created' => REQUEST_TIME,
    'changed' => REQUEST_TIME,
-   'description'=> $form_state['values']['description'],
-   'active'=> $form_state['values']['active'],
+   'description'=> $form_state['input']['description'],
+   'active'=> $form_state['input']['active'],
    'preview'=> '',
    'weight'=> 10,
   ))
@@ -126,6 +126,7 @@ function mediatube_edit_playlist_form($form){
   '#title' => t('Title'),
   '#type' => 'textfield',
   '#value' => $row['title'],
+  '#required' => TRUE,
  );
  
  $form['active'] = array(
@@ -133,6 +134,7 @@ function mediatube_edit_playlist_form($form){
   '#title' => t('Active'),
   '#options' => array(1 => t('Enabled'), 0 => t('Disabled')),
   '#default_value' => $row['active'],
+  '#required' => TRUE,
  );
  $form['alias'] = array(
   '#type' => 'textfield',
@@ -158,22 +160,41 @@ function mediatube_edit_playlist_form_validate($form, &$form_state){
  $cid = arg(5);
  $title = $form_state['input']['title'];
  
- $res = db_query('SELECT cid,title,alias FROM {mediatube_categories} WHERE title = :title', array(':title' => $title));
+ $res = db_query('SELECT cid,title FROM {mediatube_categories} WHERE title = :title', array(':title' => $title));
  
  while ( $row = $res->fetchAssoc() ){
   
   if ( ($row['title'] == $title) && ($row['cid'] != $cid) ){
    form_set_error('title', format_string('That name %title already exists', array('%title' => $title)));
-   
   }
  }
- //dsm($form_state);
+ 
+ $alias = $form_state['input']['alias'];
+ 
+ if ( $alias != '' ){
+  $res = db_query('SELECT cid,alias FROM {mediatube_categories} WHERE alias = :alias', array(':alias' => $alias));
+ 
+  while ( $row = $res->fetchAssoc() ){
+  
+  if ( ($row['alias'] == $alias) && ($row['cid'] != $cid) ){
+   form_set_error('alias', format_string('Alias %alias already exists', array('%alias' => $alias)));
+   }
+  }
+ }
 }
 
 
 function mediatube_edit_playlist_form_submit($form, $form_state){
  //dsm($form_state);
- 
+ $upd = db_update('mediatube_categories')->fields(
+  array(
+   'title' => $form_state['input']['title'],
+   'alias' => $form_state['input']['alias'],
+   'active' => $form_state['input']['active'],
+   'changed' => REQUEST_TIME,
+   'description' => $form_state['input']['description'],
+  )
+ )->condition('cid', arg(5), '=')->execute();
 }
 
 
@@ -259,7 +280,7 @@ function mediatube_add_video_form($form){
 }
 
 function mediatube_add_video_form_submit($form, $form_state){
- variable_set('mediatube_last_playlist', $form_state['values']['cid']);
+ variable_set('mediatube_last_playlist', $form_state['input']['cid']);
  drupal_set_message(t('Add new video.'));
 }
 

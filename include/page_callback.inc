@@ -95,7 +95,7 @@ function page_admin_playlists_callback(){
  
  $rows_temp = array();
  foreach ($rows AS $row){
-  $row['cid'] = l('Edit', 'admin/config/media/mediatube/playlist/' . $row['cid'] . '/edit');
+  $row['cid'] = l('Edit', 'admin/config/media/mediatube/playlist/' . $row['cid'] . '/edit',  array('query' => array('destination' => 'admin/config/media/mediatube/playlists')));
   $rows_temp[] = $row;
  }
  
