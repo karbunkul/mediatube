@@ -18,7 +18,7 @@ function mediatube_block_info(){
 
 function mediatube_block_view($delta = ''){
  $block = array();
- $block['subject'] = 'Playlists';
+ $block['subject'] = t('Playlists');
  $block['content'] = theme('mediatube_playlists_block');
  
  return $block;

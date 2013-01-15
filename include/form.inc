@@ -1,7 +1,7 @@
 <?php
 
 function mediatube_form_alter(&$form, &$form_state, $form_id) {
-  dsm($form_id);  // print form ID to messages
+  //dsm($form_id);  // print form ID to messages
   //dsm($form);  // pretty print array using Krumo to messages
 }
 
@@ -11,96 +11,99 @@ function mediatube_form_alter(&$form, &$form_state, $form_id) {
 
 function mediatube_settings_form($form){
  $form['jwplayer_path'] = array(
-  '#title' => 'Path to JWplayer',
+  '#title' => t('Path to JWplayer'),
   '#type' => 'textfield',
-  '#value' => variable_get('mediatube_jwplayer_path', 'sites/all/libraries/jw_player'),
+  '#default_value' => variable_get('mediatube_jwplayer_path', 'sites/all/libraries/jw_player'),
   '#description' => t('The location where Jw player plugin is installed. Relative paths are from the Drupal root directory.'),
   '#required' => TRUE,
  );
- $form['actions']['submit'] = array(
-  '#type'=>'submit',
-  '#value' => t('Save configuration'),
- );
+  
+ $form = system_settings_form($form);
+ $form['#submit'] = array('mediatube_settings_form_submit');
  
- return system_settings_form($form);
+ return $form;
 }
 /**
 * Implements form_validate().
 */
-function mediatube_settings_form_validate(&$form, &$form_state) {
+function mediatube_settings_form_validate($form, &$form_state) {
  if (!file_exists($form_state['values']['jwplayer_path'])) {
-   form_set_error('jwplayer_path', 'Folder path jw player plugin not exists');
+  form_set_error('jwplayer_path', 'Folder path jw player plugin not exists');
  }
- return FALSE;
 }
 
 /**
 * Implements hook_form_submit().
 */
-function mediatube_settings_form_submit(&$form, &$form_state) {
+function mediatube_settings_form_submit($form, $form_state) {
  // path to jwplayer
+ //$dsm($form_state);
  variable_set('mediatube_jwplayer_path', $form_state['values']['jwplayer_path']);
  
- drupal_set_message(t('Your configuration has been saved.'));
+ //drupal_set_message(t('Your configuration has been saved.'));
 }
 
 function mediatube_new_playlist_form($form){
- $form['fields'] = array(
+ 
+ 
+ $form['title'] = array(
+  '#type' => 'textfield',
+  '#title' => t('Title'),
+  '#default_value' => '',
+  '#required' => TRUE,
+ );
+ 
+  $form['alias'] = array(
+  '#type' => 'textfield',
+  '#title' => t('Alias'),
+  '#default_value' => '',
+ );
+ 
+ $form['extra'] = array(
   '#type' => 'fieldset',
-  '#title' => 'Add new playlist',
+  '#title' => t('Advanced'),
   '#collapsible' => TRUE,
   '#collapsed' => TRUE,
  );
  
- $form['fields']['title'] = array(
-  '#type' => 'textfield',
-  '#title' => 'Title',
-  '#default_value' => 'Лекции',
-  '#required' => TRUE,
- );
- 
- $form['fields']['active'] = array(
+ $form['extra']['active'] = array(
   '#type' => 'radios',
-  '#title' => 'Active',
-  '#options' => array(1 => 'Enabled', 0 => 'Disabled'),
+  '#title' => t('Active'),
+  '#options' => array(1 => t('Enabled'), 0 => t('Disabled')),
   '#default_value' => 1,
  );
- $form['fields']['alias'] = array(
-  '#type' => 'textfield',
-  '#title' => 'Alias',
-  '#default_value' => 'lecture',
- );
- 
- $form['fields']['description'] = array(
+
+ $form['extra']['description'] = array(
   '#type' => 'textarea',
-  '#title' => 'Description',
-  '#default_value' => 'Публичные лекции',
+  '#title' => t('Description'),
+  '#default_value' => '',
   '#rows' => 2,
  );
+
  
- $form['fields']['actions']['submit'] = array(
-  '#type' => 'submit',
-  '#value' => t('Add playlist'),
- );
+ $form = system_settings_form($form);
+ 
+ $form['actions']['submit']['#value'] = t('Add playlist');
+ $form['#submit'] = array('mediatube_new_playlist_form_submit');
  
  return $form;
 }
 
-function mediatube_new_playlist_form_validate(&$form, &$form_state) {
+function mediatube_new_playlist_form_validate($form, &$form_state) {
  $res = db_query('SELECT title,alias FROM {mediatube_categories} WHERE title = :title', array(':title' => $form_state['values']['title']))->fetchAssoc();
  //dsm($res);
  
  if ( $form_state['values']['title'] == $res['title'] ){
-  form_set_error('title', 'Title exist');
+  form_set_error('title', t('Title exist'));
  }
  
  if ( $form_state['values']['alias'] == $res['alias'] ){
-  form_set_error('alias', 'Alias exist');
+  form_set_error('alias', t('Alias exist'));
  } 
  
 }
 
-function mediatube_new_playlist_form_submit(&$form, &$form_state) {
+function mediatube_new_playlist_form_submit($form, &$form_state) {
  $record = db_insert('mediatube_categories')
   ->fields(array(
    'title' => $form_state['values']['title'],
@@ -118,82 +121,185 @@ function mediatube_new_playlist_form_submit(&$form, &$form_state) {
 function mediatube_edit_playlist_form($form){
  $row = db_query('SELECT title,alias,active,description FROM {mediatube_categories} WHERE cid = :cid', array(':cid' => arg(5)))->fetchAssoc();
  
- dsm($row);
+ //dsm($row);
  $form['title'] = array(
-  '#title' => 'Title',
+  '#title' => t('Title'),
   '#type' => 'textfield',
   '#value' => $row['title'],
  );
  
  $form['active'] = array(
   '#type' => 'radios',
-  '#title' => 'Active',
-  '#options' => array(1 => 'Enabled', 0 => 'Disabled'),
+  '#title' => t('Active'),
+  '#options' => array(1 => t('Enabled'), 0 => t('Disabled')),
   '#default_value' => $row['active'],
  );
  $form['alias'] = array(
   '#type' => 'textfield',
-  '#title' => 'Alias',
+  '#title' => t('Alias'),
   '#value' => $row['alias'],
  );
  
  $form['description'] = array(
   '#type' => 'textarea',
-  '#title' => 'Description',
+  '#title' => t('Description'),
   '#value' => $row['description'],
   '#rows' => 2,
  );
  
- return system_settings_form($form);
+ $form = system_settings_form($form);
+ 
+ $form['actions']['submit']['#value'] = t('Update');
+ $form['#submit'] = array('mediatube_edit_playlist_form_submit');
+ return $form;
+}
+
+function mediatube_edit_playlist_form_validate($form, &$form_state){
+ $cid = arg(5);
+ $title = $form_state['input']['title'];
+ 
+ $res = db_query('SELECT cid,title,alias FROM {mediatube_categories} WHERE title = :title', array(':title' => $title));
+ 
+ while ( $row = $res->fetchAssoc() ){
+  
+  if ( ($row['title'] == $title) && ($row['cid'] != $cid) ){
+   form_set_error('title', format_string('That name %title already exists', array('%title' => $title)));
+   
+  }
+ }
+ //dsm($form_state);
+}
+
+
+function mediatube_edit_playlist_form_submit($form, $form_state){
+ //dsm($form_state);
+ 
 }
 
 
 function mediatube_add_video_form($form){
-
+ // New video title
  $form['title'] = array(
-  '#title' => 'Title',
-  '#description' => 'Title for added video',
+  '#title' => t('Title'),
+  '#description' => t('Title for added video'),
   '#type' => 'textfield',
-  '#default_value' => '',
+  '#default_value' => 'title',
   '#required' => TRUE,
  );
  
- //$cid = db_query('SELECT cid, title FROM {mediatube_categories}')->fetchAssoc();
- //$dsm($cid);
+ // get all playlists
+ $res = db_query('SELECT cid, title FROM {mediatube_categories}');
+ $options = array();
+ while ( $row = $res->fetchAssoc() ){
+  $options[$row['cid']] = $row['title'];
+ }
  
  $form['cid'] = array(
-  '#type' => 'textfield',
-  '#ajax' => array(
-   'callback' => 'get_ajax_playlists_callback',
-   'method' => 'append',
-   'affect' => 'fade',
-   'event' => 'change',
-  ),
- );
- 
- $form['active'] = array(
-  '#type' => 'radios',
-  '#title' => 'Active',
-  '#options' => array(1 => 'Enabled', 0 => 'Disabled'),
-  '#default_value' => 1,
- );
- 
- $form['alias'] = array(
-  '#type' => 'textfield',
-  '#title' => 'Alias',
-  '#default_value' => '',
+  '#type' => 'select',
+  '#title' => t('Playlist'),
+  '#options' => $options,
+  '#required' => TRUE,
+  // load last playlist cid
+  '#default_value' => variable_get('mediatube_last_playlist'), 
  );
  
  $form['description'] = array(
   '#type' => 'textarea',
-  '#title' => 'Description',
+  '#title' => t('Description'),
   '#default_value' => '',
   '#rows' => 2,
+  //'#weight' => 10,
  );
  
- return system_settings_form($form);
+ // Advenced params
+ $form['extra'] = array(
+  '#type' => 'fieldset',
+  '#title' => t('Advanced'),
+  '#collapsible' => TRUE,
+  '#collapsed' => TRUE,
+ );
+ 
+ $form['extra']['alias'] = array(
+  '#type' => 'textfield',
+  '#title' => t('Alias'),
+  '#default_value' => '',
+ );
+ 
+ $form['extra']['active'] = array(
+  '#type' => 'radios',
+  '#title' => t('Active'),
+  '#options' => array(1 => t('Enabled'), 0 => t('Disabled')),
+  '#default_value' => 1,
+ );
+ 
+ 
+ 
+ $form['extra']['provider'] = array(
+  '#type' => 'radios',
+  '#title' => t('Provider'),
+  '#options' => array(0 => 'http', 1 => 'rtmp'),
+  '#default_value' => '',
+ );
+ 
+ 
+ 
+ $form['actions'] = array('#type' => 'actions');
+  $form['actions']['submit'] = array(
+    '#type' => 'submit',
+    '#value' => t('Add video'),
+  );
+ 
+ $form = system_settings_form($form);
+ 
+ $form['actions']['submit']['#value'] = t('Add');
+ $form['#submit'] = array('mediatube_add_video_form_submit');
+ //dsm($form);
+ 
+ return $form;
 }
 
-function get_ajax_playlists_callback(){
- return 'AJAX';
+function mediatube_add_video_form_submit($form, $form_state){
+ variable_set('mediatube_last_playlist', $form_state['values']['cid']);
+ drupal_set_message(t('Add new video.'));
+}
+
+
+function mediatube_import_video_form($form){
+ $form = array();
+ 
+ // get all playlists
+ $res = db_query('SELECT cid, title FROM {mediatube_categories}');
+ $options = array();
+ while ( $row = $res->fetchAssoc() ){
+  $options[$row['cid']] = $row['title'];
+ }
+ 
+ $form['cid'] = array(
+  '#type' => 'select',
+  '#title' => t('Playlist'),
+  '#options' => $options,
+  '#required' => TRUE,
+  // load last playlist cid
+  '#default_value' => variable_get('mediatube_last_playlist'), 
+ );
+ 
+ $form['upload'] = array(
+  '#name' => '',
+  '#type' => 'file',
+  '#title' => t('Load from file'),
+  '#size' => 50,
+ );
+ 
+ $form['export'] = array(
+  '#type' => 'textarea',
+  '#cols' => 5,
+  '#title' => t('JSON'),
+ );
+ 
+ $form = system_settings_form($form);
+ 
+ $form['actions']['submit']['#value'] = t('Import');
+ $form['#submit'] = array('mediatube_add_video_form_submit');
+ 
+ return $form;
 }

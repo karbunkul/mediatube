@@ -82,5 +82,19 @@ function mediatube_menu() {
   'type' => MENU_NORMAL_ITEM,
  );
  
+ $items['node/add/mediatube/default'] = array(
+  'title' => t('Add'),
+   'type' => MENU_DEFAULT_LOCAL_TASK,
+   'weight' => -10,
+ );
+ 
+ $items['node/add/mediatube/import'] = array(
+  'title' => t('Import'),
+   'type' => MENU_LOCAL_TASK,
+   'access callback' => TRUE,
+   'page callback' => 'drupal_get_form',
+   'page arguments' => array('mediatube_import_video_form'),
+ );
+ 
  return $items;
 }
