@@ -1,5 +1,5 @@
 <?php
-class Mediatube{
+class Mediatube {
   public function get_categories($fields){
     $query = format_string('SELECT !fields FROM {mediatube_categories}', array('!fields' => implode(',',$fields)));
     $res = db_query_range($query, 0,5);
@@ -21,7 +21,6 @@ class Mediatube{
   }
   
   public function get_category_title($alias){
-    //kpr($alias);
     $res = Mediatube::get_category_info($alias);
     if ( !$res ){
       $row = db_query('SELECT cid FROM {mediatube_categories} WHERE alias = :alias', array(':alias' => $alias))->fetchAssoc();
@@ -33,5 +32,19 @@ class Mediatube{
     }else{
       return $res;
     }
+  }
+  
+  public function get_category_cid($alias){
+    $db_alias = db_query('SELECT cid,alias FROM {mediatube_categories} WHERE alias = :alias', array(':alias' => $alias))->fetchAssoc();
+   if ( $db_alias ){
+    return $db_alias['cid'];
+   }else{
+    $db_cid = db_query('SELECT cid FROM {mediatube_categories} WHERE cid = :cid', array(':cid' => $alias))->fetchAssoc();
+    if ( $db_cid ){
+      return $db_cid['cid'];
+    }else{
+      return FALSE;
+    }
+   }
   }
 }

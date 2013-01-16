@@ -27,7 +27,7 @@ function page_playlists_callback() {
 }
 
 function page_playlist_callback(){
- return '123';
+ return theme('mediatube_playlist');
 }
 
 function title_playlist_callback(){
@@ -79,7 +79,7 @@ function title_video_callback(){
  * Implements page_video_callback.
  */
 function page_video_callback(){
- return 'Video ' . arg(1);
+ return theme('mediatube_video');
 }
 
 function page_admin_playlists_callback(){
