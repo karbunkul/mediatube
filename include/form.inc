@@ -107,7 +107,7 @@ function mediatube_new_playlist_form_submit($form, &$form_state) {
  $record = db_insert('mediatube_categories')
   ->fields(array(
    'title' => $form_state['input']['title'],
-   'alias' => $form_state['input']['alias'],
+   'alias' => mb_strtolower($form_state['input']['alias']),
    'created' => REQUEST_TIME,
    'changed' => REQUEST_TIME,
    'description'=> $form_state['input']['description'],
@@ -136,6 +136,7 @@ function mediatube_edit_playlist_form($form){
   '#default_value' => $row['active'],
   '#required' => TRUE,
  );
+ 
  $form['alias'] = array(
   '#type' => 'textfield',
   '#title' => t('Alias'),
@@ -150,37 +151,37 @@ function mediatube_edit_playlist_form($form){
  );
  
  $form = system_settings_form($form);
- 
  $form['actions']['submit']['#value'] = t('Update');
  $form['#submit'] = array('mediatube_edit_playlist_form_submit');
+ 
  return $form;
 }
 
 function mediatube_edit_playlist_form_validate($form, &$form_state){
  $cid = arg(5);
+ // check new title
  $title = $form_state['input']['title'];
- 
- $res = db_query('SELECT cid,title FROM {mediatube_categories} WHERE title = :title', array(':title' => $title));
+ $lower_title = mb_strtolower($title);
+ $res = db_query('SELECT cid,title FROM {mediatube_categories} WHERE title LIKE :title', array(':title' => $lower_title));
  
  while ( $row = $res->fetchAssoc() ){
-  
-  if ( ($row['title'] == $title) && ($row['cid'] != $cid) ){
+  if ( (mb_strtolower($row['title']) == $lower_title) && ($row['cid'] != $cid) ){
    form_set_error('title', format_string('That name %title already exists', array('%title' => $title)));
-  }
+  }  
  }
  
+ // check new alias
  $alias = $form_state['input']['alias'];
- 
  if ( $alias != '' ){
   $res = db_query('SELECT cid,alias FROM {mediatube_categories} WHERE alias = :alias', array(':alias' => $alias));
  
-  while ( $row = $res->fetchAssoc() ){
-  
+  while ( $row = $res->fetchAssoc() ){ 
   if ( ($row['alias'] == $alias) && ($row['cid'] != $cid) ){
    form_set_error('alias', format_string('Alias %alias already exists', array('%alias' => $alias)));
    }
   }
  }
+ 
 }
 
 
@@ -189,7 +190,7 @@ function mediatube_edit_playlist_form_submit($form, $form_state){
  $upd = db_update('mediatube_categories')->fields(
   array(
    'title' => $form_state['input']['title'],
-   'alias' => $form_state['input']['alias'],
+   'alias' => mb_strtolower($form_state['input']['alias']),
    'active' => $form_state['input']['active'],
    'changed' => REQUEST_TIME,
    'description' => $form_state['input']['description'],
