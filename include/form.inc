@@ -1,7 +1,7 @@
 <?php
 
 function mediatube_form_alter(&$form, &$form_state, $form_id) {
-  //dsm($form_id);  // print form ID to messages
+  dsm($form_id);  // print form ID to messages
   //dsm($form);  // pretty print array using Krumo to messages
 }
 
@@ -10,7 +10,30 @@ function mediatube_form_alter(&$form, &$form_state, $form_id) {
 */
 
 function mediatube_settings_form($form){
- $form['jwplayer_path'] = array(
+ $form = array();
+ 
+ // COMMON SECTION
+ $form['common'] = array(
+  '#type' => 'fieldset',
+  '#title' => t('Common'),
+  '#weight' => 0,
+ );
+ 
+ $form['common']['title_menu'] = array(
+  '#type' => 'textfield',
+  '#title' => t('Title in menu'),
+  '#required' => TRUE,
+  '#default_value' => variable_get('mediatube_name_in menu','MediaTube'),
+ );
+ 
+ // PLAYER SECTION
+ $form['player'] = array(
+  '#type' => 'fieldset',
+  '#title' => t('Player'),
+  '#weight' => 10,
+ ); 
+ 
+ $form['player']['jwplayer_path'] = array(
   '#title' => t('Path to JWplayer'),
   '#type' => 'textfield',
   '#default_value' => variable_get('mediatube_jwplayer_path', 'sites/all/libraries/jw_player'),
@@ -27,9 +50,11 @@ function mediatube_settings_form($form){
 * Implements form_validate().
 */
 function mediatube_settings_form_validate($form, &$form_state) {
- if (!file_exists($form_state['input']['jwplayer_path'])) {
+ 
+ //check path to jwplayer
+ if ( !file_exists($form_state['input']['jwplayer_path']) ) {
   form_set_error('jwplayer_path', 'Folder path jw player plugin not exists');
- }
+ } 
 }
 
 /**
@@ -37,10 +62,11 @@ function mediatube_settings_form_validate($form, &$form_state) {
 */
 function mediatube_settings_form_submit($form, $form_state) {
  // path to jwplayer
- //$dsm($form_state);
  variable_set('mediatube_jwplayer_path', $form_state['input']['jwplayer_path']);
+ // title in menu
+ variable_set('mediatube_name_in menu', $form_state['input']['title_menu']);
  
- //drupal_set_message(t('Your configuration has been saved.'));
+ drupal_set_message(t('Your configuration has been saved.'));
 }
 
 function mediatube_new_playlist_form($form){
@@ -183,7 +209,6 @@ function mediatube_edit_playlist_form_validate($form, &$form_state){
  }
  
 }
-
 
 function mediatube_edit_playlist_form_submit($form, $form_state){
  //dsm($form_state);

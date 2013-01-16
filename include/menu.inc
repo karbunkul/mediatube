@@ -7,7 +7,7 @@ function mediatube_menu() {
  
  // http:example.com/mediatube
  $items['mediatube'] = array(
-  'title' => t('MediaTube'),
+  'title' => variable_get('mediatube_name_in menu','MediaTube'),
   'access callback' => TRUE,
   'page callback' => 'page_main_callback',
   'type' => MENU_NORMAL_ITEM,
@@ -37,21 +37,7 @@ function mediatube_menu() {
    'type' => MENU_NORMAL_ITEM,
  );
  
- $items['admin/config/media/mediatube/playlist/%/edit'] = array(
-  'title' => 'Title',
-  'type' => MENU_VISIBLE_IN_BREADCRUMB,
-  'access callback' => TRUE,
-  'page callback' => 'drupal_get_form',
-  'page arguments' => array('mediatube_edit_playlist_form'),
- );
- 
- $items['mediatube/default'] = array(
-  'title' => t('View'),
-   'type' => MENU_DEFAULT_LOCAL_TASK,
-   'weight' => -10,
- );
-
- 
+ // administration 
  $items['admin/config/media/mediatube'] = array(
   'title' => 'MediaTube',
   'description' => 'MediaTube settings',
@@ -74,6 +60,16 @@ function mediatube_menu() {
    'type' => MENU_LOCAL_TASK,
  );
  
+ $items['admin/config/media/mediatube/playlist/%/edit'] = array(
+  'title' => t('Edit playlist'),
+  'type' => MENU_VISIBLE_IN_BREADCRUMB,
+  'access callback' => TRUE,
+  'page callback' => 'drupal_get_form',
+  'page arguments' => array('mediatube_edit_playlist_form'),
+ );
+
+ 
+ // node/add integration
  $items['node/add/mediatube'] = array(
   'title' => 'Mediatube',
   'page callback' => 'drupal_get_form',

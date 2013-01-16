@@ -37,7 +37,7 @@ function title_playlist_callback(){
  if ( !empty($arg) ){
   $breadcrumb = array();
   $breadcrumb[] = l('Home', '<front>');
-  $breadcrumb[] = l('MediaTube', 'mediatube');
+  $breadcrumb[] = l(variable_get('mediatube_name_in menu','MediaTube'), 'mediatube');
   $breadcrumb[] = l('Playlists', 'mediatube/playlists');
   
   drupal_set_breadcrumb($breadcrumb); 
