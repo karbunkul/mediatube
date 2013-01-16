@@ -235,7 +235,7 @@ function mediatube_add_video_form($form){
   '#title' => t('Title'),
   '#description' => t('Title for added video'),
   '#type' => 'textfield',
-  '#default_value' => 'title',
+  '#default_value' => '',
   '#required' => TRUE,
  );
  
@@ -253,6 +253,12 @@ function mediatube_add_video_form($form){
   '#required' => TRUE,
   // load last playlist cid
   '#default_value' => variable_get('mediatube_last_playlist'), 
+ );
+ 
+ $form['source'] = array(
+  '#type' => 'textfield',
+  '#title' => t('Source'),
+  '#default_value' => '',
  );
  
  $form['description'] = array(
@@ -283,26 +289,15 @@ function mediatube_add_video_form($form){
   '#options' => array(1 => t('Enabled'), 0 => t('Disabled')),
   '#default_value' => 1,
  );
- 
- 
- 
+
  $form['extra']['provider'] = array(
   '#type' => 'radios',
   '#title' => t('Provider'),
   '#options' => array(0 => 'http', 1 => 'rtmp'),
   '#default_value' => '',
  );
- 
- 
- 
- $form['actions'] = array('#type' => 'actions');
-  $form['actions']['submit'] = array(
-    '#type' => 'submit',
-    '#value' => t('Add video'),
-  );
- 
- $form = system_settings_form($form);
- 
+
+ $form = system_settings_form($form); 
  $form['actions']['submit']['#value'] = t('Add');
  $form['#submit'] = array('mediatube_add_video_form_submit');
  //dsm($form);
@@ -310,8 +305,31 @@ function mediatube_add_video_form($form){
  return $form;
 }
 
+function mediatube_add_video_form_validate($form, $form_state){
+ //dsm($form_state);
+}
+
 function mediatube_add_video_form_submit($form, $form_state){
+ // save last playlist
  variable_set('mediatube_last_playlist', $form_state['input']['cid']);
+ 
+ // record to table
+ $record = db_insert('mediatube_movies')
+ ->fields(
+  array(
+   'cid' => $form_state['input']['cid'],
+   'title' => $form_state['input']['title'],
+   'source' => $form_state['input']['source'],
+   'alias' => $form_state['input']['alias'],
+   'active' => $form_state['input']['active'],
+   'created' => REQUEST_TIME,
+   'changed' => REQUEST_TIME,
+   'provider' => $form_state['input']['provider'],
+   'description' => $form_state['input']['description'],
+   'weight' => 10,
+  )
+ )->execute();
+ 
  drupal_set_message(t('Add new video.'));
 }
 

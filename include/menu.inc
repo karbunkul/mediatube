@@ -13,6 +13,13 @@ function mediatube_menu() {
   'type' => MENU_NORMAL_ITEM,
   'menu_name' => 'navigation',
  );
+ 
+ $items['mediatube/default'] = array(
+  'title' => t('View'),
+   'type' => MENU_DEFAULT_LOCAL_TASK,
+   'weight' => -10,
+ );
+ 
  // http:example.com/mediatube/vid-1
  $items['mediatube/%'] = array(
   'title callback' => 'title_video_callback',
