@@ -26,6 +26,10 @@ function mediatube_settings_form($form){
   '#default_value' => variable_get('mediatube_name_in menu','MediaTube'),
  );
  
+ $form['common'][''] = array(
+  
+ );
+ 
  // PLAYER SECTION
  $form['player'] = array(
   '#type' => 'fieldset',
@@ -116,10 +120,11 @@ function mediatube_new_playlist_form($form){
 }
 
 function mediatube_new_playlist_form_validate($form, &$form_state) {
- $res = db_query('SELECT title,alias FROM {mediatube_categories} WHERE title = :title', array(':title' => $form_state['input']['title']))->fetchAssoc();
+ $lower_title = mb_strtolower($form_state['input']['title']);
+ $res = db_query('SELECT title,alias FROM {mediatube_categories} WHERE title LIKE :title', array(':title' => $lower_title))->fetchAssoc();
  //dsm($res);
  
- if ( $form_state['input']['title'] == $res['title'] ){
+ if ( $lower_title == mb_strtolower($res['title']) ){
   form_set_error('title', t('Title exist'));
  }
  

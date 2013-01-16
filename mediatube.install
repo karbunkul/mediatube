@@ -71,7 +71,67 @@ function mediatube_schema(){
     ),
   ),
   'primary key' => array('cid'),
-);
+ );
+
+ $schema['mediatube_movies'] = array(
+  'description' => 'TODO: please describe this table!',
+  'fields' => array(
+    'vid' => array(
+      'description' => 'Movie ID',
+      'type' => 'serial',
+      'not null' => TRUE,
+    ),
+    'cid' => array(
+      'description' => 'Category ID',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'title' => array(
+      'description' => 'Movie title',
+      'type' => 'varchar',
+      'length' => '255',
+      'not null' => TRUE,
+    ),
+    'source' => array(
+      'description' => 'Path or URL or Stream',
+      'type' => 'varchar',
+      'length' => '255',
+      'not null' => TRUE,
+    ),
+    'active' => array(
+      'description' => 'Active state',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'created' => array(
+      'description' => 'Created timestamp',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'changed' => array(
+      'description' => 'Changed timestamp',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'provider' => array(
+      'description' => 'Source type',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+    'description' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'text',
+      'not null' => TRUE,
+    ),
+    'weight' => array(
+      'description' => 'TODO: please describe this field!',
+      'type' => 'int',
+      'not null' => TRUE,
+    ),
+  ),
+  'primary key' => array('vid'),
+ );
+
 
  return $schema;
  

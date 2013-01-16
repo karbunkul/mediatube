@@ -31,5 +31,5 @@ function template_preprocess_mediatube_dashboard(&$vars) {
  * template_preprocess_hook().
  **/
 function template_preprocess_mediatube_playlists_block(&$vars) {
- $vars['items']  = Mediatube::get_categories(array('title, alias')); 
+ $vars['items']  = Mediatube::get_categories(array('title, alias, cid')); 
 }
