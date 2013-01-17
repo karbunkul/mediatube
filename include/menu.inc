@@ -20,8 +20,8 @@ function mediatube_menu() {
    'weight' => -10,
  );
  
- // http:example.com/mediatube/vid-1
- $items['mediatube/%'] = array(
+ // http:example.com/mediatube/video/1
+ $items['mediatube/video/%'] = array(
   'title callback' => 'title_video_callback',
   'access callback' => TRUE,
   'page callback' => 'page_video_callback',

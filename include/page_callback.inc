@@ -72,7 +72,14 @@ function title_video_view_callback($vid) {
 }
 
 function title_video_callback(){
- return 'Video ' . arg(1);
+ $video = Mediatube::video_info(arg(2));
+ if ( $video ){
+  return $video['title'];
+ }else{
+  return 'video not exist';
+ }
+ 
+ 
 }
 
 /**

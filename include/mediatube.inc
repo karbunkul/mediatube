@@ -47,4 +47,18 @@ class Mediatube {
     }
    }
   }
+  
+  public function video_info($alias){
+    $db_alias = db_query('SELECT * FROM {mediatube_movies} WHERE alias = :alias', array(':alias' => $alias))->fetchAssoc();
+    if ( $db_alias ){
+      return $db_alias;
+    }else{
+     $db_vid = db_query('SELECT * FROM {mediatube_movies} WHERE vid = :vid', array(':vid' => $alias))->fetchAssoc();
+      if ( $db_vid ){
+        return $db_vid;
+      }else{
+        return FALSE;
+      } 
+    }
+  }
 }

@@ -1,7 +1,7 @@
 <?php
 
 function mediatube_form_alter(&$form, &$form_state, $form_id) {
-  dsm($form_id);  // print form ID to messages
+  //dsm($form_id);  // print form ID to messages
   //dsm($form);  // pretty print array using Krumo to messages
 }
 
