@@ -62,7 +62,7 @@ function mediatube_menu() {
 
  $items['admin/config/media/mediatube/playlists'] = array(
   'title' => t('Playlists'),
-   'access callback' => TRUE,
+   'access arguments' => array('mediatube playlist administer'),
    'page callback' => 'page_admin_playlists_callback',
    'type' => MENU_LOCAL_TASK,
  );
@@ -73,6 +73,14 @@ function mediatube_menu() {
   'access callback' => TRUE,
   'page callback' => 'drupal_get_form',
   'page arguments' => array('mediatube_edit_playlist_form'),
+ );
+ 
+ $items['admin/config/media/mediatube/playlist/%/delete'] = array(
+  'title' => t('Delete playlist'),
+  'type' => MENU_VISIBLE_IN_BREADCRUMB,
+  'access callback' => TRUE,
+  'page callback' => 'drupal_get_form',
+  'page arguments' => array('mediatube_delete_confirm', 5),
  );
 
  

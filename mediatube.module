@@ -5,3 +5,14 @@ require_once 'include/mediatube.inc';
 require_once 'include/menu.inc';
 require_once 'include/page_callback.inc';
 require_once 'include/theme.inc';
+
+
+function mediatube_permission(){    
+  $perm = array(
+    'mediatube playlist administer' => array(
+      'title' => t('Administer playlist'),
+      'description' => t('Add/edit and delete playlist')
+    )
+  );
+  return $perm;
+}

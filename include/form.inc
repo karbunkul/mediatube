@@ -255,7 +255,7 @@ function mediatube_add_video_form($form){
   '#default_value' => variable_get('mediatube_last_playlist'), 
  );
  
- $form['source'] = array(
+ $form['data'] = array(
   '#type' => 'textfield',
   '#title' => t('Source'),
   '#default_value' => '',
@@ -319,7 +319,7 @@ function mediatube_add_video_form_submit($form, $form_state){
   array(
    'cid' => $form_state['input']['cid'],
    'title' => $form_state['input']['title'],
-   'source' => $form_state['input']['source'],
+   'data' => $form_state['input']['data'],
    'alias' => $form_state['input']['alias'],
    'active' => $form_state['input']['active'],
    'created' => REQUEST_TIME,
@@ -372,4 +372,26 @@ function mediatube_import_video_form($form){
  $form['#submit'] = array('mediatube_add_video_form_submit');
  
  return $form;
+}
+
+
+function mediatube_delete_confirm($form, &$form_state, $arg){
+ // id удаляемого плейлиста
+ $form['#cid'] = $arg;
+ //$form['#submit'] = array('mediatube_delete_confirm_submit2');
+// dsm($form);
+ 
+ return confirm_form($form, t('Are you sure you want to delete these playlist'), 'admin/config/media/mediatube/playlists', t('This action cannot be undone.'), t('Delete'), t('Cancel'));
+}
+
+ 
+function mediatube_delete_confirm_submit($form, $state){
+ //dsm($state);
+ // pid - $form['#pid'];
+ if ( $state['input']['confirm'] == 1 ){
+  db_delete('mediatube_categories')
+  ->condition('cid', $form['#cid'])
+  ->execute();
+ }
+ 
 }

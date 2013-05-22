@@ -21,5 +21,9 @@ function mediatube_block_view($delta = ''){
  $block['subject'] = t('Playlists');
  $block['content'] = theme('mediatube_playlists_block');
  
+ if ( user_access('mediatube playlist administer')){
+  $block['content'] .= '<br/><div>' . l(t('Administer'), 'admin/config/media/mediatube/playlists') . '</div>';
+ }
+ 
  return $block;
 }

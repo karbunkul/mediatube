@@ -102,7 +102,9 @@ function page_admin_playlists_callback(){
  
  $rows_temp = array();
  foreach ($rows AS $row){
-  $row['cid'] = l('Edit', 'admin/config/media/mediatube/playlist/' . $row['cid'] . '/edit',  array('query' => array('destination' => 'admin/config/media/mediatube/playlists')));
+  $edit = l('Edit', 'admin/config/media/mediatube/playlist/' . $row['cid'] . '/edit',  array('query' => array('destination' => 'admin/config/media/mediatube/playlists')));
+  $del = l('Delete', 'admin/config/media/mediatube/playlist/' . $row['cid'] . '/delete',  array('query' => array('destination' => 'admin/config/media/mediatube/playlists')));
+  $row['cid'] = $edit . ' ' . $del;
   $rows_temp[] = $row;
  }
  
